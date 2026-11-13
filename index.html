@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>가상기업 3사 5개년 매출 통계 분석 대시보드</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SheetJS (xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            },
+            hanbit: '#3B82F6',
+            mirae: '#10B981',
+            saebom: '#F59E0B'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Pretendard', sans-serif; }
+    .tab-active {
+      border-bottom: 3px solid #0284c7;
+      color: #0284c7;
+      font-weight: 700;
+      background-color: rgba(2, 132, 199, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <div class="p-2.5 bg-sky-600 rounded-xl text-white shadow-md shadow-sky-200">
+            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              가상기업 3개사 5개년 매출 정밀 통계 분석
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 font-semibold border border-sky-200">10대 통계기법</span>
+            </h1>
+            <p class="text-xs text-slate-500 hidden sm:block">한빛테크 · 미래솔루션 · 새봄산업 (2021년 1월 ~ 2025년 12월, 60개월 실측치)</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btnExportExcel" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition shadow-sm">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            <span>통계 데이터 다운로드</span>
+          </button>
+          <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 transition shadow-sm">
+            <i data-lucide="upload" class="w-4 h-4"></i>
+            <span>엑셀 교체 분석</span>
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden">
+          </label>
+          <button id="btnPrint" class="p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition">
+            <i data-lucide="printer" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Total Period -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">분석 데이터 규모</p>
+          <p class="text-2xl font-black text-slate-900 mt-1">60개월 <span class="text-sm font-medium text-slate-500">(5개년)</span></p>
+          <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-sky-500"></i>
+            2021.01 ~ 2025.12 월별 집계
+          </p>
+        </div>
+        <div class="w-12 h-12 bg-sky-50 rounded-xl flex items-center justify-center text-sky-600">
+          <i data-lucide="database" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Hanbit -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between border-l-4 border-l-blue-500">
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+            <p class="text-xs font-semibold text-slate-500">한빛테크 (초고성장형)</p>
+          </div>
+          <p class="text-2xl font-black text-slate-900 mt-1" id="kpiHanbitTotal">-</p>
+          <p class="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+            5개년 성장률 <span id="kpiHanbitGrowth">+0.0%</span>
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold">점유율 1위</span>
+          <p class="text-[11px] text-slate-400 mt-2">월평균 <span id="kpiHanbitAvg" class="font-bold text-slate-700">-</span>억</p>
+        </div>
+      </div>
+
+      <!-- Mirae -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between border-l-4 border-l-emerald-500">
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <p class="text-xs font-semibold text-slate-500">미래솔루션 (안정성장형)</p>
+          </div>
+          <p class="text-2xl font-black text-slate-900 mt-1" id="kpiMiraeTotal">-</p>
+          <p class="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1">
+            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+            5개년 성장률 <span id="kpiMiraeGrowth">+0.0%</span>
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold">안정성 최고</span>
+          <p class="text-[11px] text-slate-400 mt-2">월평균 <span id="kpiMiraeAvg" class="font-bold text-slate-700">-</span>억</p>
+        </div>
+      </div>
+
+      <!-- Saebom -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between border-l-4 border-l-amber-500">
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <p class="text-xs font-semibold text-slate-500">새봄산업 (성숙·감소형)</p>
+          </div>
+          <p class="text-2xl font-black text-slate-900 mt-1" id="kpiSaebomTotal">-</p>
+          <p class="text-xs text-rose-600 font-semibold mt-1 flex items-center gap-1">
+            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
+            5개년 성장률 <span id="kpiSaebomGrowth">-0.0%</span>
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-bold">계절성 뚜렷</span>
+          <p class="text-[11px] text-slate-400 mt-2">월평균 <span id="kpiSaebomAvg" class="font-bold text-slate-700">-</span>억</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs for 10 Statistical Methods -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-4 border-b border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="layers" class="w-5 h-5 text-sky-600"></i>
+          <span class="font-bold text-slate-800 text-sm">통계 분석 기법 선택</span>
+          <span class="text-xs text-slate-500">(10가지 전문 분석 툴)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs font-semibold text-slate-600">분석 대상 기업:</label>
+          <select id="companyFilter" class="text-xs bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="all">3개사 전체 비교</option>
+            <option value="hanbit">한빛테크 집중 분석</option>
+            <option value="mirae">미래솔루션 집중 분석</option>
+            <option value="saebom">새봄산업 집중 분석</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tab Buttons Grid -->
+      <div class="flex overflow-x-auto custom-scrollbar border-b border-slate-200 bg-white">
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 tab-active" data-tab="tab1">
+          <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center">1</span>
+          <span>기술통계</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab2">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">2</span>
+          <span>사분위·이상치</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab3">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">3</span>
+          <span>시계열 추세·성장률</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab4">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">4</span>
+          <span>이동평균(SMA)</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab5">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">5</span>
+          <span>계절성 지수</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab6">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">6</span>
+          <span>상관·공분산</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab7">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">7</span>
+          <span>선형회귀·예측</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab8">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">8</span>
+          <span>변동성(CV)·위험도</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab9">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">9</span>
+          <span>시계열 3요소 분해</span>
+        </button>
+        <button class="tab-btn px-4 py-3 text-xs sm:text-sm whitespace-nowrap transition flex items-center gap-2 text-slate-600 hover:text-sky-600" data-tab="tab10">
+          <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center">10</span>
+          <span>ANOVA 분산분석</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="p-6">
+
+        <!-- ================= TAB 1: 기술통계 ================= -->
+        <div id="tab1" class="tab-panel space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="calculator" class="w-5 h-5 text-sky-600"></i>
+                기법 1: 기초 기술통계 분석 (Descriptive Statistics)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">데이터의 중심경향성(평균·중앙값), 산포도(표준편차·분산), 비대칭도(왜도), 꼬리두께(첨도)를 종합 산출합니다.</p>
+            </div>
+            <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium">표본수 N = 60개월</span>
+          </div>
+
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[11px] tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="p-3">기업명</th>
+                  <th class="p-3">평균(Mean)</th>
+                  <th class="p-3">중앙값(Median)</th>
+                  <th class="p-3">표준편차(SD)</th>
+                  <th class="p-3">분산(Var)</th>
+                  <th class="p-3">최소(Min)</th>
+                  <th class="p-3">최대(Max)</th>
+                  <th class="p-3">왜도(Skewness)</th>
+                  <th class="p-3">첨도(Kurtosis)</th>
+                </tr>
+              </thead>
+              <tbody id="descTableBody" class="divide-y divide-slate-200 bg-white font-medium">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Chart & Interpretation -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="bar-chart-2" class="w-4 h-4 text-sky-600"></i>
+                매출 분포 히스토그램 (Distribution Histogram)
+              </h3>
+              <div class="h-64">
+                <canvas id="chartDescDist"></canvas>
+              </div>
+            </div>
+            <div class="bg-sky-50/70 border border-sky-200/70 p-5 rounded-xl space-y-3">
+              <div class="flex items-center gap-2 text-sky-900 font-bold text-sm">
+                <i data-lucide="info" class="w-4 h-4 text-sky-600"></i>
+                통계 해설 및 비즈니스 인사이트
+              </div>
+              <ul class="text-xs text-slate-700 space-y-2 leading-relaxed">
+                <li><strong class="text-blue-700 font-semibold">• 한빛테크:</strong> 평균 12.55억원 대비 중앙값이 12.33억원이며, 왜도가 <strong>양수(+0.34)</strong>로 우측으로 긴 꼬리를 갖는 우상향 구조입니다. 최댓값(17.61억)과 최솟값(8.59억)의 편차가 가장 커 성장 모멘텀이 매우 강력함을 입증합니다.</li>
+                <li><strong class="text-emerald-700 font-semibold">• 미래솔루션:</strong> 표준편차(1.19억)와 분산(1.42)이 3사 중 가장 낮아 극도의 안정적 매출 구조를 보입니다. 왜도(-0.16)와 첨도(-0.73) 모두 0에 가까워 정규분포에 가장 근접합니다.</li>
+                <li><strong class="text-amber-700 font-semibold">• 새봄산업:</strong> 평균(9.06억)과 중앙값(9.07억)이 일치하나, 연도별 하향세가 뚜렷하며 분기별 스파이크(분기말 효과)로 인해 특정 구간에 빈도가 몰려 있습니다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 2: 사분위 & 이상치 ================= -->
+        <div id="tab2" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="box" class="w-5 h-5 text-sky-600"></i>
+                기법 2: 5수치 요약 & 튜키(Tukey) 이상치 탐지 (Quartiles & Outliers)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">사분위범위(IQR = Q3 - Q1)와 1.5×IQR 울타리(Tukey's Fences)를 통해 비정상 특이치(이상치)를 탐지합니다.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="quartileCards">
+            <!-- Injected via JS -->
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="split" class="w-4 h-4 text-sky-600"></i>
+                사분위 범위 및 데이터 스프레드 비교
+              </h3>
+              <div class="h-64">
+                <canvas id="chartBoxPlotComp"></canvas>
+              </div>
+            </div>
+            <div class="bg-amber-50/70 border border-amber-200/70 p-5 rounded-xl space-y-3">
+              <div class="flex items-center gap-2 text-amber-900 font-bold text-sm">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i>
+                이상치 탐지 결과 및 품질 진단
+              </div>
+              <ul class="text-xs text-slate-700 space-y-2 leading-relaxed" id="outlierInsightList">
+                <li><strong class="text-slate-900">• 이상치 기준:</strong> 하한치 [Q1 - 1.5×IQR], 상한치 [Q3 + 1.5×IQR]를 벗어나는 데이터 행을 수학적으로 검증했습니다.</li>
+                <li><strong class="text-blue-700">• 한빛테크:</strong> 2025년 하반기(11월 16.78억, 12월 17.61억)는 상한 경계선 부근에 위치하나 통계적 엄밀 기준 상한선(18.2억) 내에 속하여 단절적 에러가 아닌 '자연스러운 고성장 추세'로 판정됩니다.</li>
+                <li><strong class="text-slate-800">• 결측치/오류치 없음:</strong> 60개월 데이터 전체에 비정상 결측치나 기록 오류형 극단 이상치는 발견되지 않아 데이터 신뢰도가 매우 높습니다.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 3: 시계열 추세 및 성장률 ================= -->
+        <div id="tab3" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-5 h-5 text-sky-600"></i>
+                기법 3: 시계열 추세 및 성장률 분석 (Trend & Growth: MoM, YoY, CAGR)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">월별 전월비(MoM), 전년동기비(YoY), 그리고 5개년 연평균 복합 성장률(CAGR)을 다각도로 분석합니다.</p>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+              <i data-lucide="line-chart" class="w-4 h-4 text-sky-600"></i>
+              60개월 월간 매출 실적 원계열 추이 (2021.01 ~ 2025.12)
+            </h3>
+            <div class="h-72">
+              <canvas id="chartRawTrend"></canvas>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="bar-chart" class="w-4 h-4 text-sky-600"></i>
+                연도별 합산 연매출 추이 (Annual Revenue)
+              </h3>
+              <div class="h-60">
+                <canvas id="chartAnnualRevenue"></canvas>
+              </div>
+            </div>
+            <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm space-y-3">
+              <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                <i data-lucide="percent" class="w-4 h-4 text-sky-600"></i>
+                CAGR 및 연도별 성장률 핵심 지표
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border border-slate-200 rounded-lg">
+                  <thead class="bg-slate-100 text-slate-600 font-semibold">
+                    <tr>
+                      <th class="p-2.5">기업명</th>
+                      <th class="p-2.5">2021년</th>
+                      <th class="p-2.5">2025년</th>
+                      <th class="p-2.5">총성장률</th>
+                      <th class="p-2.5">연평균 복합성장률(CAGR)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cagrTableBody" class="divide-y divide-slate-200">
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed pt-1">
+                <strong>💡 해설:</strong> <strong>한빛테크</strong>는 5년간 CAGR <strong>15.20%</strong>라는 경이적인 성장세로 시장 지배력을 장악했습니다. 
+                <strong>미래솔루션</strong>은 연평균 <strong>8.72%</strong>의 탄탄한 복합 성장을 보였으며, 
+                <strong>새봄산업</strong>은 <strong>-2.35%</strong>로 매년 소폭 위축되는 양상을 보여 주력 제품 라인업 전환이 시급함을 시사합니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 4: 이동평균(SMA) ================= -->
+        <div id="tab4" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="activity" class="w-5 h-5 text-sky-600"></i>
+                기법 4: 이동평균 및 평활화 분석 (Simple Moving Average: SMA 3 / 6 / 12)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">단기 월별 노이즈를 필터링하고 중장기 펀더멘털 방향성을 골든/데드크로스로 식별합니다.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-semibold text-slate-600">이동평균 기업 선택:</label>
+              <select id="smaCompanySelect" class="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1 font-medium">
+                <option value="hanbit">한빛테크</option>
+                <option value="mirae">미래솔루션</option>
+                <option value="saebom">새봄산업</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div class="h-80">
+              <canvas id="chartSMA"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-indigo-50/70 border border-indigo-200/70 p-5 rounded-xl space-y-3">
+            <div class="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+              <i data-lucide="zap" class="w-4 h-4 text-indigo-600"></i>
+              이동평균 신호 및 모멘텀 해설
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-700">
+              <div class="bg-white p-3.5 rounded-lg border border-indigo-100 shadow-xs">
+                <h4 class="font-bold text-blue-700 mb-1">한빛테크의 정배열 구조</h4>
+                <p>3개월선 > 6개월선 > 12개월선이 완벽한 정배열을 유지하고 있습니다. 이는 일시적 깜짝 실적이 아니라 지속적이고 강한 수요 확장이 발생하고 있음을 뜻합니다.</p>
+              </div>
+              <div class="bg-white p-3.5 rounded-lg border border-indigo-100 shadow-xs">
+                <h4 class="font-bold text-emerald-700 mb-1">미래솔루션의 안정적 이격도</h4>
+                <p>단기와 장기 이동평균선 간의 갭(이격도)이 매우 일정하게 유지됩니다. 급격한 변동 없이 일정 궤도를 그리며 성장하는 전형적인 캐시카우형 패턴입니다.</p>
+              </div>
+              <div class="bg-white p-3.5 rounded-lg border border-indigo-100 shadow-xs">
+                <h4 class="font-bold text-amber-700 mb-1">새봄산업의 역배열 및 파동</h4>
+                <p>12개월 장기선이 우하향하는 가운데, 분기말마다 3개월 단기선이 급등락하는 파동을 보입니다. 기저 수요의 펀더멘털은 줄어들고 분기 실적 밀어내기 효과가 관찰됩니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 5: 계절성 및 월별 효과 ================= -->
+        <div id="tab5" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="compass" class="w-5 h-5 text-sky-600"></i>
+                기법 5: 계절성 지수 및 월별 효과 분석 (Seasonality Index)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">전체 월평균 대비 각 월의 매출 상대 비율(100% 기준)을 산출하여 성수기와 비수기 사이클을 규명합니다.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="radar" class="w-4 h-4 text-sky-600"></i>
+                12개월 계절성 지수 레이더 비교 (기준=100)
+              </h3>
+              <div class="h-72">
+                <canvas id="chartSeasonalRadar"></canvas>
+              </div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="bar-chart" class="w-4 h-4 text-sky-600"></i>
+                월별 평균 계절 지수(%) 바 차트
+              </h3>
+              <div class="h-72">
+                <canvas id="chartSeasonalBar"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm">
+            <h4 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+              <i data-lucide="calendar-check" class="w-4 h-4 text-sky-600"></i>
+              기업별 성수기(Peak) vs 비수기(Trough) 경영 진단
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                <span class="font-bold text-blue-800">한빛테크: 4분기 집중형</span>
+                <p class="text-slate-600 mt-1">11월(114.2%)과 12월(121.5%)에 매출이 폭발하는 연말 정산형/예산 소진형 수요 구조를 띱니다. 1~2월은 상대적 비수기입니다.</p>
+              </div>
+              <div class="p-3 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                <span class="font-bold text-emerald-800">미래솔루션: 연중 균등형</span>
+                <p class="text-slate-600 mt-1">최저월(95.4%)과 최고월(104.8%)의 격차가 10%p 미만으로, 구독형/B2B 정기 계약형의 매우 탄탄한 연중 분산 구조를 보입니다.</p>
+              </div>
+              <div class="p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+                <span class="font-bold text-amber-800">새봄산업: 분기말 스파이크형</span>
+                <p class="text-slate-600 mt-1">3월, 6월, 9월, 12월 등 매 분기 결산월에 계절 지수가 급등하는 분기 결산 밀어내기 또는 분기별 정기 납품 구조를 선명히 보여줍니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 6: 상관 및 공분산 ================= -->
+        <div id="tab6" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="git-commit" class="w-5 h-5 text-sky-600"></i>
+                기법 6: 상관분석 및 공분산 (Correlation & Covariance Analysis)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">피어슨 상관계수(r)와 공분산 행렬을 통해 세 기업 간의 상호 작용(동조 vs 상충)을 분석합니다.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Correlation Matrix Table -->
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+              <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="grid" class="w-4 h-4 text-sky-600"></i>
+                피어슨 상관계수(r) 매트릭스
+              </h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-center text-xs border border-slate-200 rounded-lg overflow-hidden">
+                  <thead class="bg-slate-100 font-bold text-slate-700">
+                    <tr>
+                      <th class="p-3 text-left">구분</th>
+                      <th class="p-3">한빛테크</th>
+                      <th class="p-3">미래솔루션</th>
+                      <th class="p-3">새봄산업</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corrTableBody" class="divide-y divide-slate-200 font-semibold">
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+              <p class="text-[11px] text-slate-500 leading-tight">
+                * 상관계수 기준: 0.7 이상(강한 양의 상관), -0.7 이하(강한 음의 상관), 0.3~0.7(보통 양의 상관)
+              </p>
+            </div>
+
+            <!-- Scatter Plot -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <i data-lucide="scatter-chart" class="w-4 h-4 text-sky-600"></i>
+                  기업 간 상관 산점도(Scatter Plot)
+                </h3>
+                <select id="scatterPairSelect" class="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1 font-medium">
+                  <option value="hanbit_mirae">한빛테크 vs 미래솔루션</option>
+                  <option value="hanbit_saebom">한빛테크 vs 새봄산업</option>
+                  <option value="mirae_saebom">미래솔루션 vs 새봄산업</option>
+                </select>
+              </div>
+              <div class="h-64">
+                <canvas id="chartScatter"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-emerald-50/70 border border-emerald-200/70 p-5 rounded-xl space-y-2">
+            <h4 class="font-bold text-emerald-900 text-sm flex items-center gap-2">
+              <i data-lucide="lightbulb" class="w-4 h-4 text-emerald-600"></i>
+              상관관계가 암시하는 시장 역학 관계
+            </h4>
+            <div class="text-xs text-slate-700 space-y-1.5 leading-relaxed">
+              <p>• <strong>한빛테크 & 미래솔루션 (r = +0.87, 매우 강한 양의 상관):</strong> 전체 거시 경제 및 IT/기술 솔루션 시장의 총 파이가 함께 커지며 동반 성장하는 공조 구조를 입증합니다.</p>
+              <p>• <strong>한빛테크 & 새봄산업 (r = -0.74, 강한 음의 상관/대체 관계):</strong> 한빛테크의 신기술 솔루션 도입이 가속화되면서 전통 제조업 기반 새봄산업의 매출 파이를 잠식(Cannibalization)하고 있음을 강하게 시사합니다.</p>
+              <p>• <strong>포트폴리오 분산 효과:</strong> 새봄산업과 한빛테크는 강한 역상관을 가지므로, 두 기업의 주식이나 사업을 묶을 경우 경기 변동 충격을 흡수하는 훌륭한 헷지(Hedge) 효과를 기대할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 7: 선형회귀 및 예측 ================= -->
+        <div id="tab7" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-5 h-5 text-sky-600"></i>
+                기법 7: OLS 선형 회귀분석 및 2026년 예측 (Regression & 12-Month Forecast)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">최소자승법(OLS)을 통해 월별 추세 기울기(Beta)와 설명력(R²)을 산출하고 향후 12개월(2026년) 매출을 예측합니다.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-semibold text-slate-600">회귀 대상:</label>
+              <select id="regCompanySelect" class="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1 font-medium">
+                <option value="hanbit">한빛테크</option>
+                <option value="mirae">미래솔루션</option>
+                <option value="saebom">새봄산업</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Regression Stats Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="regMetricsCards">
+            <!-- Injected via JS -->
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+              <i data-lucide="line-chart" class="w-4 h-4 text-sky-600"></i>
+              실측 데이터(60개월) + 2026년 미래 12개월 예측 구간 차트
+            </h3>
+            <div class="h-80">
+              <canvas id="chartForecast"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm space-y-3">
+            <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4 text-sky-600"></i>
+              2026년 기업별 연간 예상 매출 가이던스
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border border-slate-200 rounded-lg">
+                <thead class="bg-slate-100 text-slate-700 font-semibold">
+                  <tr>
+                    <th class="p-2.5">기업명</th>
+                    <th class="p-2.5">회귀식 (Y = aX + b)</th>
+                    <th class="p-2.5">결정계수 (R²)</th>
+                    <th class="p-2.5">월평균 증가액</th>
+                    <th class="p-2.5">2026년 예상 연매출</th>
+                    <th class="p-2.5">전망 등급</th>
+                  </tr>
+                </thead>
+                <tbody id="forecastTableBody" class="divide-y divide-slate-200 font-medium">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 8: 변동성 및 위험도 ================= -->
+        <div id="tab8" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="shield-alert" class="w-5 h-5 text-sky-600"></i>
+                기법 8: 변동성 및 리스크 분석 (Volatility & Coefficient of Variation: CV)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">평균 대비 표준편차 비율인 변동계수(CV)와 고점 대비 최대 낙폭(MDD)을 통해 사업 안정성을 측정합니다.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="volatilityCards">
+            <!-- Injected via JS -->
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="target" class="w-4 h-4 text-sky-600"></i>
+                수익성(평균) 대비 변동성(CV) 리스크-리턴 프로파일
+              </h3>
+              <div class="h-64">
+                <canvas id="chartRiskReturn"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="arrow-down-right" class="w-4 h-4 text-rose-600"></i>
+                최대 낙폭(Drawdown Underwater) 추이
+              </h3>
+              <div class="h-64">
+                <canvas id="chartDrawdown"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-purple-50/70 border border-purple-200/70 p-5 rounded-xl space-y-2">
+            <h4 class="font-bold text-purple-900 text-sm flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4 text-purple-600"></i>
+              리스크 관리 관점의 경영 제언
+            </h4>
+            <div class="text-xs text-slate-700 space-y-1.5 leading-relaxed">
+              <p>• <strong>가장 탄탄한 안전지대:</strong> <strong>미래솔루션</strong>의 변동계수는 <strong>14.1%</strong>로 3사 중 가장 낮아 대출 심사나 신용평가 시 최상위 등급을 획득할 수 있는 고품질 현금흐름 구조입니다.</p>
+              <p>• <strong>고성장에 따른 변동성:</strong> <strong>한빛테크</strong>는 CV가 <strong>18.5%</strong>로 높으나, 이는 하방 리스크가 아닌 폭발적 상방 성장에 따른 착시입니다. 실제 하방 최대낙폭(MDD)은 매우 제한적입니다.</p>
+              <p>• <strong>주의 필요:</strong> <strong>새봄산업</strong>은 절대적 매출액이 감소하는 가운데 분기별 실적 편차로 인해 하방 리스크 관리가 시급합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 9: 시계열 3요소 분해 ================= -->
+        <div id="tab9" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="git-branch" class="w-5 h-5 text-sky-600"></i>
+                기법 9: 시계열 분해 (Decomposition: 원본 = 추세 + 계절 + 잔차)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">고전적 가법 모델(Additive Model: Y = T + S + R)을 적용하여 순수 추세, 계절 효과, 돌발 노이즈를 완전 분리합니다.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-semibold text-slate-600">분해 기업 선택:</label>
+              <select id="decompCompanySelect" class="text-xs bg-white border border-slate-300 rounded-lg px-2 py-1 font-medium">
+                <option value="hanbit">한빛테크</option>
+                <option value="mirae">미래솔루션</option>
+                <option value="saebom">새봄산업</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+              <span class="text-xs font-bold text-slate-500">1. 관측값 (Original)</span>
+              <p class="text-xs text-slate-600 mt-1">실제 측정된 60개월의 월별 매출</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-blue-200 bg-blue-50/20">
+              <span class="text-xs font-bold text-blue-700">2. 추세 성분 (Trend)</span>
+              <p class="text-xs text-slate-600 mt-1">12개월 중심이동평균을 통한 장기 기저선</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/20">
+              <span class="text-xs font-bold text-emerald-700">3. 계절 성분 (Seasonal)</span>
+              <p class="text-xs text-slate-600 mt-1">매년 동일하게 반복되는 주기적 파동</p>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-rose-200 bg-rose-50/20">
+              <span class="text-xs font-bold text-rose-700">4. 불규칙 잔차 (Residual)</span>
+              <p class="text-xs text-slate-600 mt-1">예측 불가능한 일회성 노이즈/돌발 변수</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 class="text-xs font-bold text-slate-700 mb-2">① 관측 원계열 (Original Series Y)</h4>
+              <div class="h-44"><canvas id="chartDecompOriginal"></canvas></div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 class="text-xs font-bold text-blue-700 mb-2">② 장기 추세선 (Trend Component T)</h4>
+              <div class="h-44"><canvas id="chartDecompTrend"></canvas></div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 class="text-xs font-bold text-emerald-700 mb-2">③ 계절 효과 (Seasonal Component S)</h4>
+              <div class="h-44"><canvas id="chartDecompSeasonal"></canvas></div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h4 class="text-xs font-bold text-rose-700 mb-2">④ 잔차/노이즈 (Residual Component R)</h4>
+              <div class="h-44"><canvas id="chartDecompResidual"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 10: ANOVA 가설검정 ================= -->
+        <div id="tab10" class="tab-panel hidden space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-5 h-5 text-sky-600"></i>
+                기법 10: 일원배치 분산분석 & 가설검정 (One-Way ANOVA & Hypothesis Testing)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">3개 기업 간 매출 평균의 차이가 통계학적으로 유의한지(p &lt; 0.05) F-검정을 통해 과학적으로 검증합니다.</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">귀무가설 (H₀)</span>
+              <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                "한빛테크, 미래솔루션, 새봄산업 3사의 평균 매출액 간에는 통계학적으로 유의미한 차이가 없다." (μ₁ = μ₂ = μ₃)
+              </p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-sky-200 bg-sky-50/30 shadow-sm space-y-2">
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-700">대립가설 (H₁)</span>
+              <p class="text-xs text-sky-900 font-bold leading-relaxed">
+                "적어도 어느 한 기업의 평균 매출액은 다른 기업들과 통계학적으로 유의미한 차이가 존재한다."
+              </p>
+            </div>
+          </div>
+
+          <!-- ANOVA Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-[11px] border-b border-slate-200">
+                <tr>
+                  <th class="p-3">요인 (Source of Variation)</th>
+                  <th class="p-3">제곱합 (SS)</th>
+                  <th class="p-3">자유도 (df)</th>
+                  <th class="p-3">평균제곱 (MS)</th>
+                  <th class="p-3">F-통계량 (F-Value)</th>
+                  <th class="p-3">p-value</th>
+                  <th class="p-3">검정 결과 (유의수준 1%)</th>
+                </tr>
+              </thead>
+              <tbody id="anovaTableBody" class="divide-y divide-slate-200 bg-white font-medium">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="text-xs font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                <i data-lucide="bar-chart-3" class="w-4 h-4 text-sky-600"></i>
+                기업별 95% 신뢰구간(Confidence Interval) 에러바 비교
+              </h3>
+              <div class="h-64">
+                <canvas id="chartANOVAErrorBar"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-blue-50/70 border border-blue-200/70 p-5 rounded-xl space-y-3">
+              <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                <i data-lucide="check-check" class="w-4 h-4 text-blue-600"></i>
+                가설검정 최종 결론 및 사후검정(Post-hoc) 해설
+              </h4>
+              <div class="text-xs text-slate-700 space-y-2 leading-relaxed">
+                <p>• <strong>검정 결과:</strong> 계산된 <strong>F-통계량은 74.82</strong>이며, 이에 대응하는 유의확률(p-value)은 <strong>0.0000000001 미만(p &lt; 0.001)</strong>으로 산출되었습니다.</p>
+                <p>• <strong>귀무가설 기각:</strong> 따라서 유의수준 1% 및 5% 하에서 귀무가설(H₀)을 명백히 기각하고, <strong>대립가설(H₁)을 채택</strong>합니다. 즉, 3개 기업의 매출 체급은 단순 우연이 아닌 구조적 차이가 존재합니다.</p>
+                <p>• <strong>기업 간 쌍별 차이 (Tukey HSD 관점):</strong> 
+                  <br>① 한빛테크(12.55억) vs 미래솔루션(8.42억): <strong>유의한 차이 확인 (p &lt; 0.001)</strong>
+                  <br>② 한빛테크(12.55억) vs 새봄산업(9.06억): <strong>유의한 차이 확인 (p &lt; 0.001)</strong>
+                  <br>③ 새봄산업(9.06억) vs 미래솔루션(8.42억): <strong>유의한 차이 확인 (p &lt; 0.05)</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Data Table Modal / Bottom Accordion -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+          <i data-lucide="table" class="w-4 h-4 text-sky-600"></i>
+          원본 월간 데이터 전체 조회 (60행)
+        </h3>
+        <span class="text-xs text-slate-500">단위: 억원</span>
+      </div>
+      <div class="overflow-x-auto max-h-72 custom-scrollbar border border-slate-200 rounded-xl">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0 border-b border-slate-200">
+            <tr>
+              <th class="p-2.5">No</th>
+              <th class="p-2.5">기준월</th>
+              <th class="p-2.5 text-blue-600">한빛테크 매출</th>
+              <th class="p-2.5 text-emerald-600">미래솔루션 매출</th>
+              <th class="p-2.5 text-amber-600">새봄산업 매출</th>
+              <th class="p-2.5">3사 합산 매출</th>
+            </tr>
+          </thead>
+          <tbody id="rawTableBody" class="divide-y divide-slate-100 font-medium">
+            <!-- Injected via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+    가상기업 3개 5개년 매출 통계 분석 시스템 · 10 Advanced Statistical Methodologies Dashboard
+  </footer>
+
+  <!-- Scripts -->
+  <script src="dashboard.js"></script>
+</body>
+</html>

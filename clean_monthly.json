@@ -1,0 +1,542 @@
+﻿[
+    {
+        "index":  1,
+        "date":  "2021-01",
+        "year":  2021,
+        "month":  1,
+        "hanbit":  8.59,
+        "mirae":  7.1,
+        "saebom":  10.15
+    },
+    {
+        "index":  2,
+        "date":  "2021-02",
+        "year":  2021,
+        "month":  2,
+        "hanbit":  9.08,
+        "mirae":  7.79,
+        "saebom":  10.32
+    },
+    {
+        "index":  3,
+        "date":  "2021-03",
+        "year":  2021,
+        "month":  3,
+        "hanbit":  10.22,
+        "mirae":  7.44,
+        "saebom":  9.75
+    },
+    {
+        "index":  4,
+        "date":  "2021-04",
+        "year":  2021,
+        "month":  4,
+        "hanbit":  9.83,
+        "mirae":  7.35,
+        "saebom":  9.32
+    },
+    {
+        "index":  5,
+        "date":  "2021-05",
+        "year":  2021,
+        "month":  5,
+        "hanbit":  9.77,
+        "mirae":  7.02,
+        "saebom":  8.94
+    },
+    {
+        "index":  6,
+        "date":  "2021-06",
+        "year":  2021,
+        "month":  6,
+        "hanbit":  9.78,
+        "mirae":  6.66,
+        "saebom":  8.55
+    },
+    {
+        "index":  7,
+        "date":  "2021-07",
+        "year":  2021,
+        "month":  7,
+        "hanbit":  9.36,
+        "mirae":  6.22,
+        "saebom":  8.56
+    },
+    {
+        "index":  8,
+        "date":  "2021-08",
+        "year":  2021,
+        "month":  8,
+        "hanbit":  8.64,
+        "mirae":  6.23,
+        "saebom":  8.25
+    },
+    {
+        "index":  9,
+        "date":  "2021-09",
+        "year":  2021,
+        "month":  9,
+        "hanbit":  8.35,
+        "mirae":  6.28,
+        "saebom":  8.52
+    },
+    {
+        "index":  10,
+        "date":  "2021-10",
+        "year":  2021,
+        "month":  10,
+        "hanbit":  7.69,
+        "mirae":  6.82,
+        "saebom":  9.34
+    },
+    {
+        "index":  11,
+        "date":  "2021-11",
+        "year":  2021,
+        "month":  11,
+        "hanbit":  9.47,
+        "mirae":  8.07,
+        "saebom":  10.89
+    },
+    {
+        "index":  12,
+        "date":  "2021-12",
+        "year":  2021,
+        "month":  12,
+        "hanbit":  10.36,
+        "mirae":  8.41,
+        "saebom":  11.25
+    },
+    {
+        "index":  13,
+        "date":  "2022-01",
+        "year":  2022,
+        "month":  1,
+        "hanbit":  10.07,
+        "mirae":  8.11,
+        "saebom":  10.39
+    },
+    {
+        "index":  14,
+        "date":  "2022-02",
+        "year":  2022,
+        "month":  2,
+        "hanbit":  10.79,
+        "mirae":  8.45,
+        "saebom":  9.58
+    },
+    {
+        "index":  15,
+        "date":  "2022-03",
+        "year":  2022,
+        "month":  3,
+        "hanbit":  11.19,
+        "mirae":  8.22,
+        "saebom":  9.25
+    },
+    {
+        "index":  16,
+        "date":  "2022-04",
+        "year":  2022,
+        "month":  4,
+        "hanbit":  11.54,
+        "mirae":  7.92,
+        "saebom":  8.93
+    },
+    {
+        "index":  17,
+        "date":  "2022-05",
+        "year":  2022,
+        "month":  5,
+        "hanbit":  11.84,
+        "mirae":  7.74,
+        "saebom":  8.54
+    },
+    {
+        "index":  18,
+        "date":  "2022-06",
+        "year":  2022,
+        "month":  6,
+        "hanbit":  10.98,
+        "mirae":  7.27,
+        "saebom":  8.58
+    },
+    {
+        "index":  19,
+        "date":  "2022-07",
+        "year":  2022,
+        "month":  7,
+        "hanbit":  10.66,
+        "mirae":  7.11,
+        "saebom":  7.95
+    },
+    {
+        "index":  20,
+        "date":  "2022-08",
+        "year":  2022,
+        "month":  8,
+        "hanbit":  9.99,
+        "mirae":  6.68,
+        "saebom":  8.2
+    },
+    {
+        "index":  21,
+        "date":  "2022-09",
+        "year":  2022,
+        "month":  9,
+        "hanbit":  9.66,
+        "mirae":  6.99,
+        "saebom":  8.64
+    },
+    {
+        "index":  22,
+        "date":  "2022-10",
+        "year":  2022,
+        "month":  10,
+        "hanbit":  9.31,
+        "mirae":  7.41,
+        "saebom":  9.24
+    },
+    {
+        "index":  23,
+        "date":  "2022-11",
+        "year":  2022,
+        "month":  11,
+        "hanbit":  10.43,
+        "mirae":  8.3,
+        "saebom":  10.45
+    },
+    {
+        "index":  24,
+        "date":  "2022-12",
+        "year":  2022,
+        "month":  12,
+        "hanbit":  11.31,
+        "mirae":  9.02,
+        "saebom":  11.33
+    },
+    {
+        "index":  25,
+        "date":  "2023-01",
+        "year":  2023,
+        "month":  1,
+        "hanbit":  11.66,
+        "mirae":  8.6,
+        "saebom":  9.98
+    },
+    {
+        "index":  26,
+        "date":  "2023-02",
+        "year":  2023,
+        "month":  2,
+        "hanbit":  12.27,
+        "mirae":  9.34,
+        "saebom":  9.67
+    },
+    {
+        "index":  27,
+        "date":  "2023-03",
+        "year":  2023,
+        "month":  3,
+        "hanbit":  12.95,
+        "mirae":  8.91,
+        "saebom":  9.39
+    },
+    {
+        "index":  28,
+        "date":  "2023-04",
+        "year":  2023,
+        "month":  4,
+        "hanbit":  13.35,
+        "mirae":  8.96,
+        "saebom":  9.16
+    },
+    {
+        "index":  29,
+        "date":  "2023-05",
+        "year":  2023,
+        "month":  5,
+        "hanbit":  13.41,
+        "mirae":  8.32,
+        "saebom":  8.76
+    },
+    {
+        "index":  30,
+        "date":  "2023-06",
+        "year":  2023,
+        "month":  6,
+        "hanbit":  12.98,
+        "mirae":  7.79,
+        "saebom":  7.8
+    },
+    {
+        "index":  31,
+        "date":  "2023-07",
+        "year":  2023,
+        "month":  7,
+        "hanbit":  11.78,
+        "mirae":  7.74,
+        "saebom":  8.15
+    },
+    {
+        "index":  32,
+        "date":  "2023-08",
+        "year":  2023,
+        "month":  8,
+        "hanbit":  11.25,
+        "mirae":  7.2,
+        "saebom":  8.01
+    },
+    {
+        "index":  33,
+        "date":  "2023-09",
+        "year":  2023,
+        "month":  9,
+        "hanbit":  11.15,
+        "mirae":  7.54,
+        "saebom":  8.71
+    },
+    {
+        "index":  34,
+        "date":  "2023-10",
+        "year":  2023,
+        "month":  10,
+        "hanbit":  10.89,
+        "mirae":  7.54,
+        "saebom":  8.98
+    },
+    {
+        "index":  35,
+        "date":  "2023-11",
+        "year":  2023,
+        "month":  11,
+        "hanbit":  12.48,
+        "mirae":  9.4,
+        "saebom":  10.16
+    },
+    {
+        "index":  36,
+        "date":  "2023-12",
+        "year":  2023,
+        "month":  12,
+        "hanbit":  13.45,
+        "mirae":  9.73,
+        "saebom":  10.62
+    },
+    {
+        "index":  37,
+        "date":  "2024-01",
+        "year":  2024,
+        "month":  1,
+        "hanbit":  13.01,
+        "mirae":  9.84,
+        "saebom":  9.91
+    },
+    {
+        "index":  38,
+        "date":  "2024-02",
+        "year":  2024,
+        "month":  2,
+        "hanbit":  14,
+        "mirae":  9.83,
+        "saebom":  9.23
+    },
+    {
+        "index":  39,
+        "date":  "2024-03",
+        "year":  2024,
+        "month":  3,
+        "hanbit":  15.73,
+        "mirae":  10.18,
+        "saebom":  8.98
+    },
+    {
+        "index":  40,
+        "date":  "2024-04",
+        "year":  2024,
+        "month":  4,
+        "hanbit":  15.88,
+        "mirae":  9.76,
+        "saebom":  8.43
+    },
+    {
+        "index":  41,
+        "date":  "2024-05",
+        "year":  2024,
+        "month":  5,
+        "hanbit":  15.92,
+        "mirae":  9.28,
+        "saebom":  8.4
+    },
+    {
+        "index":  42,
+        "date":  "2024-06",
+        "year":  2024,
+        "month":  6,
+        "hanbit":  15.01,
+        "mirae":  8.41,
+        "saebom":  7.79
+    },
+    {
+        "index":  43,
+        "date":  "2024-07",
+        "year":  2024,
+        "month":  7,
+        "hanbit":  13.49,
+        "mirae":  8.62,
+        "saebom":  8.01
+    },
+    {
+        "index":  44,
+        "date":  "2024-08",
+        "year":  2024,
+        "month":  8,
+        "hanbit":  13.41,
+        "mirae":  7.99,
+        "saebom":  7.61
+    },
+    {
+        "index":  45,
+        "date":  "2024-09",
+        "year":  2024,
+        "month":  9,
+        "hanbit":  12.75,
+        "mirae":  8.47,
+        "saebom":  7.93
+    },
+    {
+        "index":  46,
+        "date":  "2024-10",
+        "year":  2024,
+        "month":  10,
+        "hanbit":  12.2,
+        "mirae":  8.24,
+        "saebom":  8.79
+    },
+    {
+        "index":  47,
+        "date":  "2024-11",
+        "year":  2024,
+        "month":  11,
+        "hanbit":  14.5,
+        "mirae":  9.89,
+        "saebom":  10.09
+    },
+    {
+        "index":  48,
+        "date":  "2024-12",
+        "year":  2024,
+        "month":  12,
+        "hanbit":  15.4,
+        "mirae":  10.71,
+        "saebom":  10.74
+    },
+    {
+        "index":  49,
+        "date":  "2025-01",
+        "year":  2025,
+        "month":  1,
+        "hanbit":  14.98,
+        "mirae":  10.08,
+        "saebom":  9.42
+    },
+    {
+        "index":  50,
+        "date":  "2025-02",
+        "year":  2025,
+        "month":  2,
+        "hanbit":  16.77,
+        "mirae":  10.43,
+        "saebom":  9.11
+    },
+    {
+        "index":  51,
+        "date":  "2025-03",
+        "year":  2025,
+        "month":  3,
+        "hanbit":  18.27,
+        "mirae":  10.88,
+        "saebom":  8.86
+    },
+    {
+        "index":  52,
+        "date":  "2025-04",
+        "year":  2025,
+        "month":  4,
+        "hanbit":  18.14,
+        "mirae":  10.2,
+        "saebom":  8.28
+    },
+    {
+        "index":  53,
+        "date":  "2025-05",
+        "year":  2025,
+        "month":  5,
+        "hanbit":  17.76,
+        "mirae":  10.13,
+        "saebom":  7.85
+    },
+    {
+        "index":  54,
+        "date":  "2025-06",
+        "year":  2025,
+        "month":  6,
+        "hanbit":  16.89,
+        "mirae":  9.19,
+        "saebom":  7.79
+    },
+    {
+        "index":  55,
+        "date":  "2025-07",
+        "year":  2025,
+        "month":  7,
+        "hanbit":  15.84,
+        "mirae":  9.35,
+        "saebom":  7.81
+    },
+    {
+        "index":  56,
+        "date":  "2025-08",
+        "year":  2025,
+        "month":  8,
+        "hanbit":  14.55,
+        "mirae":  8.63,
+        "saebom":  7.81
+    },
+    {
+        "index":  57,
+        "date":  "2025-09",
+        "year":  2025,
+        "month":  9,
+        "hanbit":  13.95,
+        "mirae":  8.63,
+        "saebom":  8.28
+    },
+    {
+        "index":  58,
+        "date":  "2025-10",
+        "year":  2025,
+        "month":  10,
+        "hanbit":  14.17,
+        "mirae":  9.25,
+        "saebom":  8.6
+    },
+    {
+        "index":  59,
+        "date":  "2025-11",
+        "year":  2025,
+        "month":  11,
+        "hanbit":  16.78,
+        "mirae":  10.8,
+        "saebom":  9.55
+    },
+    {
+        "index":  60,
+        "date":  "2025-12",
+        "year":  2025,
+        "month":  12,
+        "hanbit":  17.61,
+        "mirae":  11.8,
+        "saebom":  10.15
+    }
+]
